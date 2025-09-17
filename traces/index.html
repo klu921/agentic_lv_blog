@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Video 00000021 – Q2657 Trace</title>
+<style>
+ body{font-family:'Calibri',Arial,Helvetica,sans-serif;margin:40px;background:#fafafa}
+ h1{margin-top:0}
+ .block{margin-bottom:48px;padding:20px;background:#fff;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+ img{max-width:220px;margin:4px;border:1px solid #ddd;border-radius:4px}
+ ul{list-style:none;padding-left:0;margin-left:0}
+ code{background:#eee;padding:2px 4px;border-radius:3px}
+ .block.caption{background:#e6f2ff}
+ .block.vlm{background:#eefbea}
+ .block.final{background:#f3e8ff}
+ .tab{margin-bottom:20px}
+ .tab button{background:#ddd;border:none;outline:none;padding:10px 18px;cursor:pointer;font-weight:bold;border-radius:4px 4px 0 0;margin-right:4px}
+ .tab button.active{background:#bbb}
+ .tabcontent{display:none}
+</style>
+</head>
+<body>
+<div class="tab">
+  <button class="tablinks" id="defaultOpen" onclick="openTrace(event,'q2657')">EXAMPLE 1</button>
+  <button class="tablinks" onclick="openTrace(event,'q516')">EXAMPLE 2</button>
+  <button class="tablinks" onclick="openTrace(event,'q1071')">EXAMPLE 3</button>
+</div>
+
+<div id="q2657" class="tabcontent">
+<h1>Why can’t the vlogger close her mouth at 28:00?</h1>
+<p><strong>Final answer: B — the food tastes weird.</strong></p>
+
+
+<h3>Answer choices</h3>
+<ol>
+  <li>A — She bit her tongue</li>
+  <li>B — The food tastes weird</li>
+  <li>C — She is showing her new braces</li>
+  <li>D — She is imitating an Internet meme</li>
+</ol>
+
+<p>The pipeline reached this conclusion through two VLM inspections and a caption search, detailed below.</p>
+
+
+<div class="block caption">
+<h2>LLM caption search</h2>
+<code>"can't close my mouth"</code>
+<p>The caption index returned many captions with high similarity scores. The strongest was: <code>frame_1672</code> – subtitle: “<em>Ugh, I can’t even close my mouth right now!</em>” ‑ which hints that taste or texture is causing the reaction.</p>
+</div>
+
+<div class="block vlm">
+<h2>First VLM query</h2>
+<p>Frames 1650-1700: Look at these consecutive frames from around the 28:00 timestamp. The vlogger is eating something and her mouth stays open. Describe what is happening: Is the food extremely hard, extremely tasty, or does she appear to have a jaw injury or any other reason why she cannot close her mouth? Provide visual clues that support the explanation:</p>
+<p>
+  <img src="frames/frame_1650.jpg">
+  <img src="frames/frame_1660.jpg">
+  <img src="frames/frame_1670.jpg">
+  <img src="frames/frame_1680.jpg">
+  <img src="frames/frame_1690.jpg">
+  <img src="frames/frame_1700.jpg">
+</p>
+<p><strong>VLM judgment:</strong> “Female vlogger, eyes squinting, mouth half-open in a disgusted expression while holding chopsticks near lips.”  The negative sentiment aligns with the ‘weird taste’ hypothesis.</p>
+</div>
+
+<div class="block vlm">
+<h2>Second VLM query</h2>
+<p>Frames 1665-1710: Examine these consecutive frames (around the 28:00 mark, i.e., ~1680 seconds) showing the vlogger eating. Describe the food she is eating, her facial expression, and any visible signs of discomfort, strain, or injury. Specifically note whether her mouth is open because the food is extremely tasty, extremely hard, or because she appears to have a jaw problem. Provide clear visual evidence that supports one of the answer choices (A: food is so delicious, B: food tastes weird, C: food is so hard, D: jaw dislocated).</p>
+<p>
+  <img src="frames/frame_1665.jpg">
+  <img src="frames/frame_1675.jpg">
+  <img src="frames/frame_1685.jpg">
+  <img src="frames/frame_1695.jpg">
+  <img src="frames/frame_1705.jpg">
+  <img src="frames/frame_1710.jpg">
+</p>
+<p><strong>VLM judgment:</strong> “Same subject grimacing, sticking tongue slightly out as if tasting something unpleasant.”  Reinforces choice B.</p>
+</div>
+
+<div class="block final">
+  <h2>Final Answer</h2>
+  <p><strong>Final answer: B — The food tastes weird.</strong></p>
+  <ul>
+    <li>
+      <img src="frames/frame_1665.jpg" alt="Frame 1665" style="max-width:180px; margin-right:10px;">
+      <img src="frames/frame_1670.jpg" alt="Frame 1670" style="max-width:180px;">
+    </li>
+  </ul>
+  <p>
+    <strong>Reasoning:</strong> Frame 1665 shows the vlogger biting a stick of fermented shark (hákarl). Her eyebrows are raised, eyes widened and her mouth is open in a clear reaction of surprise/disgust – a typical response to the strong, unusual taste of the food. There are no signs of strain, pain, or abnormal jaw positioning. Frame 1670, taken a few seconds later, shows her with a normal closed‑mouth smile, confirming that her jaw is fine and the open‑mouth pose was only a reaction to the taste. Therefore, the reason she cannot close her mouth at 28:00 is that the food tastes weird.
+  </p>
+
+</div>
+</div>
+
+</div><!-- end q2657 -->
+
+<div id="q516" class="tabcontent">
+<h1>When the people in the government are thinking, what kind of person comes into the meeting room?</h1>
+<p><strong>Final answer: B — A person with a particularly long nose.</strong></p>
+
+<h3>Answer choices</h3>
+<ol>
+  <li>A — A person without a nose</li>
+  <li>B — A person with a particularly long nose</li>
+  <li>C — A person with a colorful hat</li>
+  <li>D — A person in a tall hat</li>
+</ol>
+
+<p><strong>Final answer: B — A person with a particularly long nose.</strong></p>
+
+<div class="block caption">
+<h2>LLM caption search</h2>
+<p><code>council deep thought</code>.  A few high similarity captions around 390, 415.
+</p>
+</div>
+
+<div class="block vlm">
+<h2>First VLM query – council deep-thought scene</h2>
+<p>Prompt to VLM: “Describe the figures in frames 390-391.  Pay attention to facial features (especially noses), head-wear colour, and any comedic attire that could signal a jester, and any visual cues of an entrance.”</p>
+<p>
+  <img src="frames/frame_0390.jpg">
+  <img src="frames/frame_0391.jpg">
+</p>
+<p>Officials in medieval garb sit around a large table, poring over scrolls (frame&nbsp;0390). Characters are animated, wearing large hats and colorful decorative clothing. Characters are seated around a table, indicative of a council meeting. A man in a large colorful hat sits at the head of the table.</p>
+</div>
+<div class="block final">
+  <h2>Final Answer: C - A person with a colorful hat</h2>
+  <p>
+    <img src="frames/frame_0390.jpg">
+    <img src="frames/frame_0391.jpg">
+  </p>
+  <p>The man in the large colorful hat is the jester who enters the doorway. His nose is long and he is wearing a large colorful hat.</p>
+  </div>
+
+<div class = "block">
+<h2>Critic assessment</h2>
+<p>The critic VLM flagged lack of evidence for a multicoloured hat and the frames show no evidence of an entrance, only a council meeting. Confidence&nbsp;25%.</p>
+</div>
+<h2>Critic Re-evaluation</h2>
+
+<div class="block vlm">
+  <h3>Prompt sent to Critic VLM</h3>
+  <p><code>"Re-inspect frames 0390 and 0391. Decide whether the the man who enters the council meeting is a jester, and if he wears a colorful hat. List concrete visual cues for your conclusion."</code></p>
+
+  <h3>Critic observations</h3>
+  <ul>
+    There is a man who looks like a jester. He is wearing a colorful hat. There is no evidence that he has just entered the council meeting. He sits at the end of the table. My suggestion is to check for a specific entrance scene to the council meeting.
+  </ul>
+
+  <h3>Confidence: 25%</h3>
+</div>
+
+<div class = "block caption">
+  <h2>Critic Re-evaluation</h2>
+    <h3>LLM Caption Search</h3>
+    <p><code>Jester enters doorway</code> Numerous similar captions around 0525 were found.</p>
+</div>
+<div class = "block vlm">
+  <h2>First VLM query – jester enters doorway (frames 519-526)</h2>
+  <p>Prompt to VLM: “Focus on the doorway character in frames 519-526.  Describe nose length/shape, hat colour/pattern, and any props.  Decide which single visual trait best differentiates him from other characters.”</p>
+  <p>
+    <img src="frames/frame_0519.jpg">
+    <img src="frames/frame_0521.jpg">
+    <img src="frames/frame_0524.jpg">
+    <img src="frames/frame_0526.jpg">
+  </p>
+  <p><strong>VLM judgment:</strong> A man is coming out of a doorway. The scene is too bright to tell the colors of his hat, but he has a long, grotesque hooked nose.</p>
+</div>
+<div class = "block vlm">
+  <h2>Second VLM query – jester with a long nose (frames 521-524)</h2>
+  <p>Prompt to VLM: “Focus on the doorway character in frames 521-524.  Describe nose length/shape, hat colour/pattern, and any props.  Decide which single visual trait best differentiates him from other characters.”</p>
+  <p>
+    <img src="frames/frame_0521.jpg">
+    <img src="frames/frame_0526.jpg">
+  </p>
+  <p><strong>VLM judgment:</strong> It is confirmed that the man has a long hooked nose. He is not wearing a hat and has white hair, and no other distinguishing features.</p>
+</div>
+<div class="block final">
+  <h2>Final Answer</h2>
+  <p><strong>Final answer: B — A person with a particularly long nose.</strong></p>
+  <ul>
+    <li>
+      <img src="frames/frame_0519.jpg" alt="Frame 0519" style="max-width:180px; margin-right:10px;">
+      <img src="frames/frame_0521.jpg" alt="Frame 0521" style="max-width:180px;">
+      <img src="frames/frame_0524.jpg" alt="Frame 0524" style="max-width:180px;">
+      <img src="frames/frame_0526.jpg" alt="Frame 0526" style="max-width:180px;">
+    </li>
+  </ul>
+  <p><strong>Reasoning:</strong> Frame 0519 shows the jester entering the doorway. Frame 0521 shows the jester with a long nose. There is a nose, and no evidence of a multicoloured hat, or a tall hat. Therefore the correct answer is B.</p>
+</div>
+
+</div><!-- end q516 -->
+
+<div id="q1071" class="tabcontent">
+
+
+<h1>What is the relationship between the lady in blue clothes and the kid in yellow clothes?</h1>
+<p></p>
+
+<h3>Answer choices</h3>
+<ol>
+  <li>A — Friendship</li>
+  <li>B — Stranger relationship</li>
+  <li>C — Mother-child relationship</li>
+  <li>D — Teacher-student relationship</li>
+</ol>
+
+<p><strong>Final answer: D — Teacher-student relationship.</strong></p>
+
+
+<div class="block caption">
+<h2>LLM caption search</h2>
+<p><code>"blue clothes" AND "yellow clothes"</code> &nbsp;— the model searched the subtitle index for co-mentions of these colour terms. Matches were sparse, so it fell back to colour-histogram matching and surfaced two temporal windows:<br>
+• <strong>Window-A</strong> (frames 2057-2073): wide classroom context.<br>
+• <strong>Window-B</strong> (frame 2086): close interaction.</p>
+</div>
+
+<div class="block vlm">
+<h2>First VLM query – classroom overview</h2>
+<p>Prompt to VLM: “For frames 2057 & 2073 describe the setting and interpersonal roles.  Note uniforms, teaching aids, and any mentor-like posture.”</p>
+<p>
+  <img src="frames/frame_2057.jpg">
+  <img src="frames/frame_2073.jpg">
+</p>
+<p>Both frames show a classroom: children in uniform on the floor, educational mats and craft supplies visible. The woman in blue guides them, leaning over and pointing – classic teacher body language.</p>
+</div>
+<div class="block final">
+<h2>Second VLM query – close interaction frame</h2>
+<p>Prompt to VLM: “Analyse frame 2086.  Focus on body language, eye contact, and relative height.  Does the adult display parental affection or instructional guidance?”</p>
+<p>
+  <img src="frames/frame_2086.jpg">
+</p>
+<p>A second adult in blue joins, both crouching to child eye-level while giving instructions. No parental hugging or casual interaction – the dynamic is authoritative yet supportive, confirming a <strong>teacher-student</strong> relationship.</p>
+</div>
+<h2>Critic assessment</h2>
+<p>The critic model assigned 65 % confidence to teacher-student based on classroom setting, uniformed children, and directive gestures.</p>
+<h2>Critic Re-evaluation</h2>
+
+<div class="block vlm">
+  <h2>VLM Query</h2>
+  <p><code>"Re-inspect frame 2086. Decide whether the adult’s posture and spatial distance suggest parental affection or classroom instruction. List concrete visual cues for your conclusion."</code></p>
+  <p>
+    <img src="frames/frame_2086.jpg">
+  </p>
+  The adult keeps both hands visible and held to herself. She keeps a distance from the children, and works with them. They share a small resemblance, but this is still more likely to be a teacher-student relationship than a mother-child relationship.
+
+  <h3>Confidence: 88%</h3>
+  <p>Combining these cues, the critic model increased probability for <em>teacher-student</em> from 65 % to 88 % and left the answer unchanged.</p>
+</div>
+
+<div class="block final">
+  <h2>Final Answer</h2>
+  <p><strong>Final answer: D — Teacher-student relationship.</strong></p>
+  <ul>
+    <li>
+      <img src="frames/frame_2057.jpg" alt="Frame 2057" style="max-width:180px; margin-right:10px;">
+      <img src="frames/frame_2086.jpg" alt="Frame 2086" style="max-width:180px;">
+    </li>
+  </ul>
+  <p><strong>Reasoning:</strong> Frame 2057 shows the adult distributed materials while kneeling among multiple children—a classic teacher posture in early-learning environments.  In frame 2086 she leans forward with an open palm pointing to the worksheet, while the child looks up attentively.  No intimate touch or protective stance suggests a parent; instead the power dynamic and setting confirm a <em>teacher-student</em> relationship.</p>
+</div>
+
+</div><!-- end q1071 -->
+
+<script>
+function openTrace(evt, traceName){
+  var i, tabcontent=document.getElementsByClassName("tabcontent"), tablinks=document.getElementsByClassName("tablinks");
+  for(i=0;i<tabcontent.length;i++){tabcontent[i].style.display="none";}
+  for(i=0;i<tablinks.length;i++){tablinks[i].classList.remove("active");}
+  document.getElementById(traceName).style.display="block";
+  evt.currentTarget.classList.add("active");
+}
+document.getElementById("defaultOpen").click();
+</script>
+</body>
+</html>
