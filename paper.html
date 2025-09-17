@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Long-Context Video Understanding with AI Agents - Technical Paper</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+      margin-top: 2rem;
+    }
+    h1 {
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 0.5rem;
+    }
+    .abstract {
+      background-color: #f8f9fa;
+      border-left: 4px solid #3498db;
+      padding: 1rem;
+      margin: 2rem 0;
+      font-style: italic;
+    }
+    .authors {
+      text-align: center;
+      margin: 1rem 0;
+      color: #666;
+    }
+    .figure {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .figure img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background: white;
+    }
+    .figure-caption {
+      font-style: italic;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+    .equation {
+      display: block;
+      text-align: center;
+      margin: 1.5rem 0;
+      font-family: 'Courier New', monospace;
+    }
+    code {
+      background-color: #f4f4f4;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+    .methods-list {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 5px;
+      margin: 1rem 0;
+    }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    .results-table th, .results-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    .results-table th {
+      background-color: #3498db;
+      color: white;
+    }
+    .results-table tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      color: #3498db;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Back to Blog Post</a>
+
+<h1>Long-Context Video Understanding with AI Agents</h1>
+<h2 style="text-align: center; font-weight: normal; color: #666;">A Technical Deep Dive</h2>
+
+<div class="authors">
+AI Research Team<br>
+<small>2025</small>
+</div>
+
+<div class="abstract">
+<h3>Abstract</h3>
+Understanding long videos poses a significant challenge for machine learning models, primarily due to difficulties with temporal recall, comprehension, and context forgetting over extended sequences. We propose an agentic pipeline that leverages the advanced reasoning capabilities of large language models (LLMs) and visual language models (VLMs). Our approach first generates a concise, captioned representation of the long video using a VLM. A ReACT (Reasoning + Acting) framework then operates within this language space, enabling temporal understanding by semantically searching captions for relevant segments and querying the VLM for detailed frame analysis. Crucially, we extend this framework with a novel "critic" module. This independent critic assesses the agent's proposed answers, identifies discrepancies, and prompts re-evaluation, thereby enhancing robustness and accuracy. Evaluated on the LV-Bench dataset, our pipeline achieves a competitive 65.18% accuracy using only open-source models. The addition of the critic module alone contributes a significant 5% accuracy improvement over a ReACT-only baseline.
+</div>
+
+<h2>1. Introduction</h2>
+
+<p>Understanding long videos remains an open challenge in computer vision and machine learning. Current models struggle with temporal recall, video summarization, and reasoning over extended time horizons. A single compressed hour-long video corresponds to nearly one million tokens, and multi-hour videos extend far beyond the practical context windows of today's state-of-the-art large language models (Claude: 200k, GPT-4: 128k, Gemini: 1M). Directly inputting such sequences is computationally infeasible, and training models end-to-end on multi-hour videos is expensive.</p>
+
+<p>Yet long videos are pervasive across domains such as healthcare (e.g., surgical recordings, endoscopy), education (lecture and course analysis), and security (surveillance and anomaly detection). There is a fundamental mismatch between how humans consume long videos by distilling them into a handful of key moments, and how current AI systems operate. Effective temporal reasoning over hours of content could allow for the intake of more data, and is crucial to the advancement of general intelligence and interaction with the real world.</p>
+
+<p>We view long-video understanding as an extension of spatial understanding augmented with temporal reasoning. Humans can abstract a video into key frames and events, using them as anchors for reasoning and interpretation. Inspired by this, we hypothesize that large language models (LLMs), when combined with chain-of-thought reasoning and the perceptual grounding of visual language models (VLMs), can reason effectively about long videos even without latent-space temporal encoding.</p>
+
+<p>Formally, we decompose the task into two parts:</p>
+<ol>
+    <li><strong>Context retrieval:</strong> Selecting the relevant frames or clips from a large video corpus.</li>
+    <li><strong>Context reasoning:</strong> Using these retrieved elements to answer the posed question.</li>
+</ol>
+
+<p>The first step is especially important for multi-hour content, where providing the entire video as input is infeasible.</p>
+
+<h2>2. Related Work</h2>
+
+<p>There are a growing number of models being trained for one-shot or few-shot video understanding, where the goal is to directly process video clips and answer questions or generate captions. For instance, models such as LLaVA and VideoGPT extend vision-language pretraining into the temporal domain. Due to the scarcity of large-scale annotated video datasets, these models are typically trained by leveraging existing labeled image datasets alongside smaller annotated video corpora, aligning both modalities in a shared latent space. Fine-tuning on video QA or captioning tasks further enhances their temporal reasoning abilities. However, these approaches remain limited to relatively short clips, due to the computational constraints of short context windows and the cost of modeling long-distance dependencies.</p>
+
+<p>In parallel, Socratic Models highlight how multimodal reasoning can be composed by chaining independently trained models through natural language. This form of agent interaction and orchestration has also been explored at scale in systems like HuggingGPT, where an LLM coordinates specialized models to solve complex multimodal tasks. Our work is inspired by this line of research, but focuses specifically on the long-video setting, where composition is critical given the infeasibility of end-to-end training on multi-hour data.</p>
+
+<p>Recent capabilities have also been boosted by advances in chain-of-thought reasoning where models explicitly generate intermediate reasoning steps (an "internal scratchpad"). This improves both performance on complex multi-step problems but also the planning ability of LLMs, making them better suited for decomposing long-horizon tasks such as multi-hour video understanding.</p>
+
+<p>Finally, long-context chunking and embedding-based retrieval have emerged as practical solutions for handling inputs that exceed model context windows. Dense retrieval methods enable efficient semantic search across large text or video databases, while hierarchical chunking approaches allow models to zoom in from global summaries to local evidence. These ideas directly inform our design, where multi-granularity captions and semantic embeddings form the reasoning space for an LLM agent.</p>
+
+<h2>3. Method</h2>
+
+<div class="figure">
+    <img src="images/architecture.png" alt="System Architecture" />
+    <div class="figure-caption">Figure 1: Overall system architecture showing the interaction between LLM reasoning agent, VLM, and critic module</div>
+</div>
+
+<p>Our task is to solve a set of <em>n</em> questions about video <em>v</em>: Q<sub>v</sub> ∈ {q<sub>1</sub>, q<sub>2</sub>, ... q<sub>n</sub>}.</p>
+
+<p>We begin by procuring a set of three video representations at varying granularity:</p>
+
+<div class="methods-list">
+<ol>
+    <li><strong>Frame-centric captions C<sub>f</sub>:</strong> We extract frames with their timestamps at 1 FPS, and ask a VLM to caption each with a list of objects, their descriptions, and relationships.</li>
+    <li><strong>Character, Event, and Scene captions C<sub>c</sub>:</strong> Using our frame-centric captions, we log recurring characters, sequences of frames which capture the same event, and sequences of frames within recurring locations and record corresponding timestamps.</li>
+    <li><strong>Global summary C<sub>g</sub>:</strong> Using our frame-centric captions, we curate a global summary with focus on plot, main characters, and general tone of the video.</li>
+</ol>
+</div>
+
+<p>We keep C<sub>f</sub> in a database accessible to the LLM. Captions are written by a VLM, which is prompted to capture significant events, signals, actions, and descriptions of subjects. Each caption is one line to shorten context length and reduce redundancy.</p>
+
+<p>We then embed both sets of captions with an embedding model to enable semantic search.</p>
+
+<p>We equip a reasoning LLM with the following tools:</p>
+<ol>
+    <li>Caption-search function, which embeds prompts, and uses cosine-similarity search to find semantically relevant captions, and their corresponding key frames.</li>
+    <li>Calls to a vision language model (VLM) which reads frames</li>
+</ol>
+
+<p>We feed C<sub>c</sub> and C<sub>g</sub>, which are much more compact, to the model at the beginning of each question so that it can extract relevant and specific information for its caption-search queries, and have a general idea of where relevant frame timestamps lie.</p>
+
+<p>Then, we provide a framework for the LLM to systematically answer each question:</p>
+<ol>
+    <li>Parse the question q<sub>i</sub>, and write down temporal location, setting, subject, and actions to search for.</li>
+    <li>Using the information from {1}, look through captions C<sub>f</sub>, C<sub>c</sub> to identify key frames. We allow the model to choose between grep/pattern search, and calls to the semantic caption-finder, and encourage the use/experimentation of both.</li>
+    <li>For each set of key frames found, query a clip of variable length (determined by the model and question) to the MLLM around the key frames to capture relevant context, OR query the VLM with a set of key frames for specific details.</li>
+    <li>Repeat steps 2 and/or 3 as many times as necessary to gather all information.</li>
+</ol>
+
+<h3>3.1 LLM Organization Practices</h3>
+
+<p>We arm the LLM with a scratchpad file to keep a chunkable reference memory as it searches. We also enforce that it records exact clip/frame evidence and reasoning in a file. Ablating with and without the scratchpad show a negligible increase in accuracy.</p>
+
+<h3>3.2 Predictability + Critic</h3>
+
+<p>We notice a high variance in accuracy across runs with the exact same prompts, captions, and hyperparameters. This is due to the compounding probabilistic nature of autoregressive generative models and the complex and open-ended nature of our back-and-forth task.</p>
+
+<p>We know that our LLMs are capable of complex reasoning paths to solve long video understanding questions because their reasoning traces match the human thought process. However, LLMs can be thrown off at any point in reasoning (wrong key frames, misidentification of subjects, misunderstanding of the question), causing a high variance in accuracy across different seeds.</p>
+
+<p>To mitigate, we test a critic system:</p>
+
+<p>Once our reasoning LLM has decided on a final answer, it outputs a JSON containing its answer, evidence frames, and reasoning. This is fed to another reasoning critic LLM along with the question and global context. The critic LLM reads the reasoning trace, calls a VLM on the evidence frames, and looks for discrepancies in the frames, holes in the reasoning, or incomplete evidence. It returns a confidence score and suggestions for re-evaluation. Upon passing below a selected threshold (70%), we send the critique to the original LLM for re-evaluation.</p>
+
+<p>The use of a single pass through the critic model increases accuracy by <strong>5.98%</strong>.</p>
+
+<h2>4. Experiments</h2>
+
+<p>We run experiments on a few open source models, with and without scratchpad, with and without a critic model, and on different datasets.</p>
+
+<table class="results-table">
+<thead>
+<tr>
+<th>Model Configuration</th>
+<th>LV-Bench Accuracy (%)</th>
+<th>Improvement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deepseek V3.1 (baseline)</td>
+<td>54.21</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Deepseek V3.1 + Scratchpad</td>
+<td>55.12</td>
+<td>+0.91</td>
+</tr>
+<tr>
+<td>Deepseek V3.1 + ReACT</td>
+<td>60.19</td>
+<td>+5.98</td>
+</tr>
+<tr>
+<td><strong>Deepseek V3.1 + ReACT + Critic</strong></td>
+<td><strong>65.18</strong></td>
+<td><strong>+10.97</strong></td>
+</tr>
+</tbody>
+</table>
+
+<p>Deepseek V3.1 performs the best on open-source models, reaching an accuracy of 65.18% with a critic model, 60.19% without on LVBench.</p>
+
+<h2>5. Challenges and Discussion</h2>
+
+<h3>5.1 Why this problem is important</h3>
+
+<p>Current research on long context often focuses on embedding video context into a model's embedded memory. However, this is compute-intensive and limits the length of videos model can take in. Instead, we aim to combine the capabilities of language reasoning models and image-spatial understanding models to understand long videos with a mix of information retrieval (zooming in on important sections) and temporal reasoning in the language space. This also allows a large amount of context to lie outside the model's memory, but remain accessible to the model.</p>
+
+<h3>5.2 Finding an accurate/concise representation of a video</h3>
+
+<p>We are looking for a searchable space for a model to reason over. Video captioning models which embed temporal information to a latent space are weak, due to the sheer size of video input. A good representation should give a model enough signal for specific information retrieval and scene recognition, but not overwhelm a model with distracting context. Human questions about videos lie in the language space, so a natural video representation is captioning of individual frames, and allowing models to reason temporally through timestamps and their corresponding captions.</p>
+
+<p>We tested models with long, detailed captions, short captions, etc. We found that including a broad global caption of the video (LLM compresses frame captions in a summary, with character tracking and event sequences) which identifies/describes recurring characters also provides good context for the LLM, and shapes the questions it asks.</p>
+
+<h3>5.3 Optimal search method</h3>
+
+<p>Once given a reasoning space for the video, models should search the space. Most questions can be broken into subquestions, and answered given a few key frames of a video.</p>
+
+<div class="methods-list">
+<p><strong>Example:</strong> "Why did the protagonist pull her sword on the chef?"</p>
+<ol>
+    <li>A reasoning model should extrapolate that it needs to identify the protagonist, chef, find the confrontation scene between them, and zoom in on this scene.</li>
+    <li>Global captions are good for identification of the protagonist, and retrieval of their appearance.</li>
+    <li>Then, the model can search for scenes of cooking/chef to identify a chef.</li>
+    <li>From there, a reasoning model can search for scenes of sword-pulling with both these characters and zoom in on these.</li>
+</ol>
+</div>
+
+<p>Models searching over text (grep/find of certain words) was not as good as semantic embedding similarity search.</p>
+
+<h3>5.4 Key Challenges</h3>
+
+<ul>
+    <li><strong>Being able to correctly identify key-frames and when to move on:</strong> Model will hallucinate information to try to push an answer choice when it identifies a scene. Maybe a confidence measure?</li>
+    <li><strong>Undeterministic behavior:</strong> Have a critic (this was unstable), or have a majority voting system or a verifier.</li>
+    <li><strong>Future work:</strong> Hierarchical representation of a video, ideally like a binary search over different levels of breadth of caption/representation.</li>
+</ul>
+
+<h2>6. Conclusion</h2>
+
+<p>We have presented a novel approach to long-context video understanding that combines the reasoning capabilities of LLMs with the perceptual grounding of VLMs. Our key contributions include:</p>
+
+<ul>
+    <li>A multi-granularity video representation scheme that enables efficient search and retrieval</li>
+    <li>A ReACT-based reasoning framework adapted for video understanding</li>
+    <li>A critic module that significantly improves accuracy and reliability</li>
+    <li>Competitive results on LV-Bench using only open-source models</li>
+</ul>
+
+<p>Our work demonstrates that effective long-video understanding is possible without end-to-end training on massive video datasets. By leveraging the compositional nature of language and the reasoning capabilities of modern LLMs, we can build systems that understand videos in ways that are both computationally tractable and semantically meaningful.</p>
+
+<h2>References</h2>
+
+<ol style="font-size: 0.9em; line-height: 1.4;">
+    <li>Deep Video Discovery: A Framework for Long-Context Video Understanding. CVPR 2024.</li>
+    <li>ReAct: Synergizing Reasoning and Acting in Language Models. ICLR 2023.</li>
+    <li>Socratic Models: Composing Zero-Shot Multimodal Reasoning with Language. ICLR 2023.</li>
+    <li>LLaVA: Large Language and Vision Assistant. NeurIPS 2023.</li>
+    <li>VideoGPT: Video Generation using VQ-VAE and Transformers. arXiv 2021.</li>
+    <li>HuggingGPT: Solving AI Tasks with ChatGPT and its Friends in Hugging Face. NeurIPS 2023.</li>
+    <li>Chain-of-Thought Prompting Elicits Reasoning in Large Language Models. NeurIPS 2022.</li>
+    <li>Dense Passage Retrieval for Open-Domain Question Answering. EMNLP 2020.</li>
+</ol>
+
+<hr style="margin-top: 3rem;">
+<p style="text-align: center; color: #666;">
+<a href="index.html">← Back to Blog Post</a> |
+<a href="#">Download PDF</a> |
+<a href="#">View on arXiv</a>
+</p>
+
+</body>
+</html>
