@@ -52,15 +52,10 @@ Finally, long-context chunking and embedding-based retrieval have emerged as pra
 
 ## Method
 
-<div style="text-align: center; margin: 2rem 0;">
-  <img src="fig1.pdf" alt="LLM pipeline with tools" style="max-width: 80%;">
-  <p><em>Figure 1: LLM pipeline with tools</em></p>
-</div>
+![Figure 1: Agentic-LV pipeline](fig1.png)
 
-<div style="text-align: center; margin: 2rem 0;">
-  <img src="fig2.pdf" alt="Example pipeline pathway" style="max-width: 100%;">
-  <p><em>Figure 2: Example pipeline pathway</em></p>
-</div>
+
+![Figure 2: Trace-viewer layout](fig2.png)
 
 Our task is to solve a set of $n$ questions about video $v$:
 $$Q_v \ni \{q_1, q_2, \ldots q_n\}.$$
