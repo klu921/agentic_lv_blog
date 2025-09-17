@@ -53,7 +53,7 @@ Finally, long-context chunking and embedding-based retrieval have emerged as pra
 ## Method
 
 <div style="text-align: center; margin: 2rem 0;">
-  <img src="fig1new.pdf" alt="LLM pipeline with tools" style="max-width: 80%;">
+  <img src="fig1.pdf" alt="LLM pipeline with tools" style="max-width: 80%;">
   <p><em>Figure 1: LLM pipeline with tools</em></p>
 </div>
 
