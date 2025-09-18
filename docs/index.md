@@ -16,29 +16,22 @@ title: "Long-Context Video Understanding"
 
 # Long-Context Video Understanding
 
-*An agentic approach to understanding multi-hour videos through reasoning and critique*
+*An agentic approach to understanding multi-hour videos*
 
-## Abstract
+## The Problem
 
-Understanding long videos poses a significant challenge for machine learning models, primarily due to difficulties with temporal recall, comprehension, and context forgetting over extended sequences. We propose an agentic pipeline that leverages the advanced reasoning capabilities of large language models (LLMs) and visual language models (VLMs). Our approach first generates a concise, captioned representation of the long video using a VLM. A ReACT (Reasoning + Acting) framework then operates within this language space, enabling temporal understanding by semantically searching captions for relevant segments and querying the VLM for detailed frame analysis. Crucially, we extend this framework with a novel "critic" module. This independent critic assesses the agent's proposed answers, identifies discrepancies, and prompts re-evaluation, thereby enhancing robustness and accuracy. Evaluated on the LV-Bench dataset, our pipeline achieves a competitive **65.18% accuracy** using only open-source models. The addition of the critic module alone contributes a significant **5% accuracy improvement** over a ReACT-only baseline.
+Imagine a future where AI lives in the physical world. It collaborates with humans, interacts with nature, understands science, designs experiments, and builds systems. One day, AI will not lie in a computer screen, strapped to a software layer. It may walk the streets, see what we see, and proactively help us solve human problems. That day is within reach, but still far away.
 
-## Introduction
+As humans we continually take in visual information, and over long periods of time we recognize trends, pinpoint moments in the past, and understand our personal history. A truly intelligent machine should interact with the same raw visual data humans do so that it understands the systems we've built. The problem of long context video understanding one that we need to solve for the future. It also carries many applications in the moment (understanding medical data, surveillance, video-data analysis, robotics, etc).
 
-Understanding long videos remains an open challenge in computer vision and machine learning. Current models struggle with temporal recall, video summarization, and reasoning over extended time horizons. A single compressed hour-long video corresponds to nearly **one million tokens**, and multi-hour videos extend far beyond the practical context windows of today's state-of-the-art large language models (Claude: 200k, GPT-4: 128k, Gemini: 1M). Directly inputting such sequences is computationally infeasible, and training models end-to-end on multi-hour videos is expensive.
+This is a problem of computer vision, data representation, long context, and memory. Current ML models support short context lengths of up to $1$ million tokens. That's enough for one highly-compressed hour long video. Even if transformers become fully linearized, the amount of visual data we will collect on day will likely exceed the capacity of online storage. 
 
-Yet long videos are pervasive across domains such as healthcare (e.g., surgical recordings, endoscopy), education (lecture and course analysis), and security (surveillance and anomaly detection). There is a fundamental mismatch between how humans consume long videos by distilling them into a handful of key moments, and how current AI systems operate. Effective temporal reasoning over hours of content could allow for the intake of more data, and is crucial to the advancement of general intelligence and interaction with the real world.
+So solving long context video understanding requires a few components:
+1. An offline representation of a video  
+2. Identifying relevant moments in a long video  
+3. Strong reasoning over the visual and temporal space
 
-We view long-video understanding as an extension of spatial understanding augmented with temporal reasoning. Humans can abstract a video into key frames and events, using them as anchors for reasoning and interpretation. Inspired by this, we hypothesize that large language models (LLMs), when combined with chain-of-thought reasoning and the perceptual grounding of visual language models (VLMs), can reason effectively about long videos even without latent-space temporal encoding.
-
-Formally, we decompose the task into two parts:
-1. **Context retrieval:** Selecting the relevant frames or clips from a large video corpus.
-2. **Context reasoning:** Using these retrieved elements to answer the posed question.
-
-The first step is especially important for multi-hour content, where providing the entire video as input is infeasible.
-
-We utilize the ReAct framework, which integrates reasoning with tool use. Within this framework, an LLM can both perform step-by-step reasoning and invoke external resources, such as searching through a captions database and communicating with other MLLMs. Prior work such as Deep Video Discovery has explored agentic systems for long-video evaluation, and we build on these ideas and push them further. While reasoning agents are powerful, they remain prone to alignment errors, lossy image-to-text translation, and hallucinations. To address these issues, we introduce a third-party **critic** module that evaluates agent outputs, identifies discrepancies, and prompts re-evaluation. This leads to a novel cycle: *Reason, Act, Critique, React*.
-
-With this design, we combine the reasoning strengths of LLMs and the perceptual grounding of VLMs to build a robust pipeline for answering questions about long-form video.
+We propose an agentic method to understanding long videos to address each of these components on fully open-source models. We utilize the ReAct framework, which integrates reasoning with tool use. Within this framework, an LLM can both perform step-by-step reasoning and invoke external resources, such as searching through a captions database and communicating with other MLLMs. Prior work such as Deep Video Discovery has explored agentic systems for long-video evaluation, and we build on these ideas and push them further. While reasoning agents are powerful, they remain prone to alignment errors, lossy image-to-text translation, and hallucinations. While experimenting with agents, we also notice their fragility and unreliability, especially on subjective visual data. To address these issues, we introduce a third-party **critic** module that evaluates agent outputs, identifies discrepancies, and prompts re-evaluation. This leads to a novel cycle: *Reason, Act, Critique, React*.
 
 ## Related Work
 
@@ -54,16 +47,13 @@ Finally, long-context chunking and embedding-based retrieval have emerged as pra
 
 ![Figure 1: Agentic-LV pipeline](fig1.png)
 
-
-![Figure 2: Trace-viewer layout](fig2.png)
-
 Our task is to solve a set of $n$ questions about video $v$:
 $$Q_v \ni \{q_1, q_2, \ldots q_n\}.$$
 
 We begin by procuring a set of three video representations at varying granularity:
 
-1. **Frame-centric captions $C_f$**: We extract frames with their timestamps at 1 FPS, and ask a VLM to caption each with a list of objects, their descriptions, and relationships.
-2. **Character, Event, and Scene captions $C_c$**: Using our frame-centric captions, we log recurring characters, sequences of frames which capture the same event, and sequences of frames within recurring locations and record corresponding timestamps.
+1. **Frame-centric captions $C_f$**: We extract frames with their timestamps at 1 FPS, and ask a VLM to caption each with a list of objects, their descriptions, and relationships.  
+2. **Character, Event, and Scene captions $C_c$**: Using our frame-centric captions, we log recurring characters, sequences of frames which capture the same event, and sequences of frames within recurring locations and record corresponding timestamps.  
 3. **Global summary $C_g$**: Using our frame-centric captions, we curate a global summary with focus on plot, main characters, and general tone of the video.
 
 We keep $C_f$ in a database accessible to the LLM. Captions are written by a VLM, which is prompted to capture significant events, signals, actions, and descriptions of subjects. Each caption is one line to shorten context length and reduce redundancy.
@@ -71,20 +61,22 @@ We keep $C_f$ in a database accessible to the LLM. Captions are written by a VLM
 We then embed both sets of captions with an embedding model to enable semantic search.
 
 We equip a reasoning LLM with the following tools:
-1. Caption-search function, which embeds prompts, and uses cosine-similarity search to find semantically relevant captions, and their corresponding key frames.
-2. Calls to a vision language model (VLM) which reads frames
+1. Caption-search function, which embeds prompts, and uses cosine-similarity search to find semantically relevant captions, and their corresponding key frames.  
+2. Calls to a vision language model (VLM) which reads frames.
 
 We feed $C_c$ and $C_g$, which are much more compact, to the model at the beginning of each question so that it can extract relevant and specific information for its caption-search queries, and have a general idea of where relevant frame timestamps lie.
 
 Then, we provide a framework for the LLM to systematically answer each question:
-1. Parse the question $q_i$, and write down temporal location, setting, subject, and actions to search for.
-2. Using the information from {1}, look through captions $C_f, C_c$ to identify key frames. We allow the model to choose between grep/pattern search, and calls to the semantic caption-finder, and encourage the use/experimentation of both.
-3. For each set of key frames found, query a clip of variable length (determined by the model and question) to the MLLM around the key frames to capture relevant context, OR query the VLM with a set of key frames for specific details.
+1. Parse the question $q_i$, and write down temporal location, setting, subject, and actions to search for.  
+2. Using the information from {1}, look through captions $C_f, C_c$ to identify key frames. We allow the model to choose between grep/pattern search, and calls to the semantic caption-finder, and encourage the use/experimentation of both.  
+3. For each set of key frames found, query a clip of variable length (determined by the model and question) to the MLLM around the key frames to capture relevant context, OR query the VLM with a set of key frames for specific details.  
 4. Repeat steps 2 and/or 3 as many times as necessary to gather all information.
 
 Step 1 allows the model to organize what it's searching for, corresponding to the question.
 
 In step 2, we encourage the LLM to first search through $C_c$, and find relevant frames.
+
+![Figure 2: Trace-viewer layout](fig2.png)
 
 ### LLM Organization Practices
 
@@ -102,48 +94,38 @@ Once our reasoning LLM has decided on a final answer, it outputs a json containi
 
 The use of a single pass through the critic model increases accuracy by **5.98%**.
 
-## Experiments
-
 We run experiments on a few open source models, with and without scratchpad, with and without a critic model, and on different datasets.
 
-Deepseek V3.1 performs the best on open-source models, reaching an accuracy of **65.18%** with a critic model, **60.19%** without on LVBench.
+Deepseek V3.1 performs the best on open-source models, reaching an accuracy of **65.18%** with a critic model, **60.19%** without on LVBench. This is a stronger performance than all other open-source model SOTA.
 
-## Challenges
+## Token and Cost Analysis
 
-### Why this problem is important
+![Figure 1: Token Analysis](full_token_preview.png)
 
-Current research on long context often focuses on embedding video context into a model's embedded memory. However, this is compute-intensive and limits the length of videos model can take in. Instead, we aim to combine the capabilities of language reasoning models and image-spatial understanding models to understand long videos with a mix of information retrieval (zooming in on important sections) and temporal reasoning in the language space. This also allows a large amount of context to lie outside the model's memory, but remain accessible to the model.
+**Context:** a normal hour-long video compresses to about **1,000,000 tokens**. If you naively “pass through the entire video” for every question, you spend ~1M input tokens per question, which is expensive and slow especially if the questions or the video are streamed in, as they are in most real-life cases. 
 
-### Finding an accurate/concise representation of a video
+If instead we have an offline representation that we can requery, we can save on amortized token cost. We precompute multi-granularity captions ($C_f, C_c, C_g$) once, then retrieve only the relevant bits. With the critic enabled, a typical Q&A cycle looks like:
 
-We are looking for a searchable space for a model to reason over. Video captioning models which embed temporal information to a latent space are weak, due to the sheer size of video input. A good representation should give a model enough signal for specific information retrieval and scene recognition, but not overwhelm a model with distracting context. Human questions about videos lie in the language space, so a natural video representation is captioning of individual frames, and allowing models to reason temporally through timestamps and their corresponding captions.
+- Per question: about 10,435 input tokens and 3,998 output tokens (combined across VLM and LLM). (This cost on the most expensive open-source models is ~ 3 cents per question)
+- Of that, the critic pass** contributes roughly 1,251 input and 575 output tokens (i.e., ~12–13% of the per-question total).
 
-We tested models with long, detailed captions, short captions, etc.
+Across **16 questions**, we spend around **166,960 input** and **63,968 output** tokens in total (≈**230,928** tokens overall), which is **~23% of a single 1M-token hour**—and **~96× smaller** than the naïve **16M**-token pass-through.
 
-We found that including a broad global caption of the video (llm compresses frame captions in a summary, with character tracking and event sequences) which identifies/describes recurring characters also provides good context for the LLM, and shapes the questions it asks.
+This creates an amortization effect because the heavy lifting (captions and embeddings) is reused, so the incremental cost of each new question stays near ~10k input tokens + ~4k output tokens*, and we also don't exceed a context window for long videos. As the number of questions grows, the per-question cost collapses toward that small incremental budget instead of scaling linearly with full-video passes. However, we still do have to account for the initial video representation cost.
 
-### Optimal search method
+**Critic tradeoff in practice:**  
+We add ~12.7% more tokens per question to achieve ~5.98% increase in absolute accuracy.  
+If quality matters, we can also run the critic on an adjustable confidence level for more a more customized accuracy-cost tradeoff.
 
-Once given a reasoning space for the video, models should search the space. Most questions can be broken into subquestions, and answered given a few key frames of a video.
+## Limitations and Discussion
 
-**Example:** "Why did the protagonist pull her sword on the chef?"
+The approach inherits several limitations from captioning-based retrieval. Frame-level captions can be lossy and may ignore subtle but important cues (e.g., identity, small objects, fine-grained actions). Agent reliability is also sensitive to prompt phrasing and decoding stochasticity; although the critic reduces variance, performance can still degrade when the initial key-frame selection is not correct. Moreover, while multi-granularity captions alleviate context constraints, they introduce representation bias: omissions in the captions can cause models to hallucinate findings which don't exist.
 
-A reasoning model should extrapolate that it needs to identify the protagonist, chef, find the confrontation scene between them, and zoom in on this scene.
+Despite these constraints, hierarchical retrieval from $C_c \rightarrow C_f$, combined with the *Reason, Act, Critique, React* loop, provides a useful balance. The method restricts the LLM’s working set to relevant evidence, defers to vision models when necessary, and employs a critic to flag inconsistencies and prompt re-evaluation.
 
-- Global captions are good for identification of the protagonist, and retrieval of their appearance.
-- Then, the model can search for scenes of cooking/chef to identify a chef.
-- From there, a reasoning model can search for scenes of sword-pulling with both these characters and zoom in on these.
+## Conclusion
 
-Models searching over text (grep/find of certain words) was not as good as semantic embedding similarity search.
+Long-context video understanding is fundamentally a systems integration problem that requires compact multimodal representations, targeted retrieval, and a strong reasoning cycle. The proposed agent combines hierarchical captions, semantic search, VLM-based image understanding, and a critic to improve robustness. On open-source models, this configuration yields the SOTA score on LVBench by only source models, and results in an approximate 6% absolute accuracy improvement with roughly 13% additional tokens per question. Future work will aim to tighten video representation either by focusing on strengthening the captioner for small-object and identity sensitivity or employing a latnet space repersentation, invoking the critic conditionally based on uncertainty, and enforcing stronger evidence grounding by attaching verifiable frame or clip identifiers to each claim.
 
-Ideas I didn't get to test: hierarchical representation of a video. ideally like a binary search over different levels of breadth of caption/representation.
 
-### Being able to correctly identify key-frames and when to move on
 
-Model will hallucinate information to try to push an answer choice when it identifies a scene. Maybe a confidence measure?
-
-### Undeterministic behavior
-
-Have a critic (this was unstable), or have a majority voting system or a verifier.
-
----
