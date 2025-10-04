@@ -62,6 +62,8 @@ Once we have our caption database, we embed it using an open-source token embedd
   <img
     src="fig1framecap.png"
     alt="Frame and Caption database"
+    style="width: 100%; height: auto;"
+
   >
   <figcaption>
     <h4>Fig 1. Frame and Caption Database Creation</h4>
@@ -85,6 +87,7 @@ The LLM generates a short "search query" from the user query and performs a cosi
   <img
     src="Question_example.png"
     alt="Question + Caption Example"
+    style="width: 100%; height: auto;"
   >
   <figcaption>
     <h4>Question + Caption Example</h4>
@@ -101,6 +104,7 @@ Following the previous example, the LLM may have pinpointed relevant frames from
   <img
     src="VLM_query.png"
     alt="VLM Query Example"
+    style="width: 100%; height: auto;"
   >
   <figcaption>
     <h4>VLM Query Example</h4>
@@ -125,6 +129,7 @@ Similarly, the LLM may make certain assumptions that aren't explicitly seen from
   <img
     src="wrong_final_answer.png"
     alt="Incorrect Reasoning Path"
+    style="width: 100%; height: auto;"
   >
   <figcaption>
     <h4>Incorrect Reasoning Path</h4>
@@ -141,6 +146,7 @@ The critic agent also has access to a critic VLM and analyzes the LLM's reasonin
   <img
     src="critic_response.png"
     alt="Critic Response"
+    style="width: 100%; height: auto;"
   >
   <figcaption>
     <h4>Critic Response</h4>
@@ -157,6 +163,7 @@ An example of the entire pipeline can be seen here:
   <img
     src="fig2new-1.png"
     alt="Full Pipeline"
+    style="width: 100%; height: auto;"
   >
   <figcaption>
     <h4>Full Pipeline</h4>
