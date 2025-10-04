@@ -58,7 +58,7 @@ Once these captions are parsed, we chunk them and pass through an LLM one more t
 
 Once we have our caption database, we embed it using an open-source token embedder, so we can semantically match captions with queries.
 
-<figure class="diagram" style="max-width: 400px; margin: 0 auto;">
+<figure class="diagram" style="max-width: 400; margin: 0 auto;">
   <img
     src="fig1framecap.png"
     alt="Frame and Caption database"
