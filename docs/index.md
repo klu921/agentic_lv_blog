@@ -58,7 +58,7 @@ Once these captions are parsed, we chunk them and pass through an LLM one more t
 
 Once we have our caption database, we embed it using an open-source token embedder, so we can semantically match captions with queries.
 
-<figure class="diagram" style="max-width: 300; margin: 0 auto;">
+<figure class="diagram" style="max-width: 500px; margin: 0 auto;">
   <img
     src="fig1framecap.png"
     alt="Frame and Caption database"
@@ -83,7 +83,7 @@ Next, we construct a multi-turn pathway between a reasoning LLM and a VLM. An LL
 
 The LLM generates a short "search query" from the user query and performs a cosine-similarity algorithm between the search query and the image captions in the database. For example:
 
-<figure class="diagram" style="max-width: 300px; margin: 0 auto;">
+<figure class="diagram" style="max-width: 500px; margin: 0 auto;">
   <img
     src="Question_example.png"
     alt="Question + Caption Example"
