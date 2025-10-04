@@ -58,7 +58,15 @@ Once these captions are parsed, we chunk them and pass through an LLM one more t
 
 Once we have our caption database, we embed it using an open-source token embedder, so we can semantically match captions with queries.
 
-![Frame and Caption Database Creation](fig1framecap.png){: width="600px" .center}
+<figure class="diagram">
+  <img
+    src="fig1framecap.png"
+    alt="Frame and Caption database"
+  >
+  <figcaption>
+    <h4>Fig 1. Frame and Caption Database Creation</h4>
+  </figcaption>
+</figure>
 
 This representation is:
 - **Expandable**: If we have video data streamed in, we can continue adding linearly to our database. The entire video doesn't need to be fed to a model over again to maintain history.
