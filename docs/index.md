@@ -81,7 +81,15 @@ Next, we construct a multi-turn pathway between a reasoning LLM and a VLM. An LL
 
 The LLM generates a short "search query" from the user query and performs a cosine-similarity algorithm between the search query and the image captions in the database. For example:
 
-![Question Example](Question_example.png){: width="400px" .center}
+<figure class="diagram">
+  <img
+    src="Question_example.png"
+    alt="Question + Caption Example"
+  >
+  <figcaption>
+    <h4>Question + Caption Example</h4>
+  </figcaption>
+</figure>
 
 The search algorithm returns the **top k = 40** caption-similarity scores with timestamps, and the LLM reads and clusters relevant timestamps.
 
@@ -89,7 +97,15 @@ The search algorithm returns the **top k = 40** caption-similarity scores with t
 
 Following the previous example, the LLM may have pinpointed relevant frames from captions regarding when a council appears deep in thought, but needs more detail. It can query a VLM with a question of choice:
 
-![VLM Query](VLM_query.png){: width="400px" .center}
+<figure class="diagram">
+  <img
+    src="VLM_query.png"
+    alt="VLM Query Example"
+  >
+  <figcaption>
+    <h4>VLM Query Example</h4>
+  </figcaption>
+</figure>
 
 The VLM returns a chain of thought with a response to the LLM's prompt. For each VLM call, we also attach the global summary to provide required context.
 
@@ -105,7 +121,15 @@ We notice that when the LLM queries the VLM asking for specific visual informati
 
 Similarly, the LLM may make certain assumptions that aren't explicitly seen from the frames. An example following the question we've been exploring:
 
-![Wrong Answer Example](wrong_final_answer.png){: width="400px" .center}
+<figure class="diagram">
+  <img
+    src="wrong_final_answer.png"
+    alt="Incorrect Reasoning Path"
+  >
+  <figcaption>
+    <h4>Incorrect Reasoning Path</h4>
+  </figcaption>
+</figure>
 
 The question asked "what kind of person comes into the meeting room," yet the LLM receives information describing the people seated at the table and assumes one of those were the ones that entered the meeting room. It's easy for the LLM to lose small details of the question or to assume information from structured VLM responses.
 
@@ -113,15 +137,31 @@ To remediate, we run a second pass through a critic model, which takes in the or
 
 The critic agent also has access to a critic VLM and analyzes the LLM's reasoning + evidence in relevant frames as a sanity check. An example pass through the critic VLM:
 
-![Critic Response](critic_response.png){: width="400px" .center}
+<figure class="diagram">
+  <img
+    src="critic_response.png"
+    alt="Critic Response"
+  >
+  <figcaption>
+    <h4>Critic Response</h4>
+  </figcaption>
+</figure>
+
 
 The critic analyzes the visual data with the accompanying reasoning and determines a confidence score and suggestions for the VLM.
 
 If the confidence score is below a threshold **T = 70%**, the critic's reasoning is passed back to the acting LLM, and the LLM follows its suggestions for re-evaluating, utilizing the same three tools as earlier.
 
 An example of the entire pipeline can be seen here:
-
-![Full Pipeline](fig2new-1.png){: width="400px" .center}
+<figure class="diagram">
+  <img
+    src="fig2new-1.png"
+    alt="Full Pipeline"
+  >
+  <figcaption>
+    <h4>Full Pipeline</h4>
+  </figcaption>
+</figure>
 
 To see the full walkthroughs of questions, please visit our [interactive demo](https://klu921.github.io/agentic_lv_demo/).
 
@@ -136,7 +176,8 @@ On a random sample of videos from the HourVideo dataset, the pipeline is able to
 
 ## Token and Cost Analysis
 
-![Token Analysis](full_token_preview.png){: width="400px" .center}
+![Token Analysis](full_token_preview.png)
+
 
 **Context:** A normal hour-long video compresses to about 1,000,000 tokens. If you naively pass the entire video for every question, you spend ~1M input tokens per question, which is expensive and slow, especially in streaming settings.
 
