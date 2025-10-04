@@ -21,7 +21,7 @@ Imagine a future where AI lives in the physical world. It sees what we see, lear
 
 ## The Challenge
 
-Current AI models have a fixed context length. A single highly compressed long video can hold around **1 million tokens**, making it difficult for AI to reason through long visual contexts. Even with fully linearized attention, the visual data we generate daily will exceed what any model can process in a single pass.
+Current AI models have a fixed context length. A single highly compressed 1 hour video holds around **1 million tokens**, making it difficult for AI to reason through long visual contexts. Even with fully linearized attention, the visual data we generate daily will exceed what any model can process in a single pass.
 
 We need a fundamentally different approach to understand and process multi-hour videos.
 
