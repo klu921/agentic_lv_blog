@@ -101,14 +101,9 @@ Similarly, the LLM may make certain assumptions that aren't explicitly seen from
 
 The question asked "what kind of person comes into the meeting room," yet the LLM receives information describing the people seated at the table and assumes one of those were the ones that entered the meeting room. It's easy for the LLM to lose small details of the question or to assume information from structured VLM responses.
 
-To remediate, we run a second pass through a critic model, which takes in:
-- The original question
-- Video context
-- LLM's reasoning
-- The relevant VLM frames chosen by the LLM
-- Outputs a confidence score and sanity check
+To remediate, we run a second pass through a critic model, which takes in the original question, global summary, LLM's reasoning, and the relevant VLM frames chosen by the LLM. 
 
-The critic agent also has access to a critic VLM. An example pass through the critic VLM:
+The critic agent also has access to a critic VLM and analyzes the LLM's reasoning + evidence in relevant frames as a sanity check. An example pass through the critic VLM:
 
 ![Critic Response](critic_response.png)
 
@@ -129,31 +124,33 @@ Our agentic video pipeline on the open-source models **DeepSeek V3.1** and Meta'
 - **60.19%** accuracy with no critic pass-through
 - **65.18%** accuracy with critic pass-through
 
-On a random sample of videos from the **HourVideo dataset**, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans in the dataset **68.18%** of the time, showing the strength of our representation.
+On a random sample of videos from the HourVideo dataset, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans in the dataset **68.19%** of the time, showing the strength of our representation.
 
 ## Token and Cost Analysis
 
 ![Token Analysis](full_token_preview.png)
 
-**Context:** A normal hour-long video compresses to about **1,000,000 tokens**. If you naively pass the entire video for every question, you spend ~1M input tokens per question, which is expensive and slow, especially in streaming settings.
+**Context:** A normal hour-long video compresses to about 1,000,000 tokens. If you naively pass the entire video for every question, you spend ~1M input tokens per question, which is expensive and slow, especially in streaming settings.
 
-With an offline representation that can be re-queried, we save amortized token cost. We precompute multi-granularity captions once, then retrieve only relevant bits.
+With an offline representation that can be re-queried, we can save token costs through amortization. We precompute multi-granularity captions once, then retrieve only relevant information and context at query-time.
 
-**With the critic enabled**, a typical Q&A cycle looks like:
+With the critic enable*, a typical Q&A cycle looks like:
 
 - **Per question**: About 10,435 input tokens and 3,998 output tokens (combined across VLM and LLM), costing roughly **~$0.03** on the most expensive open-source options
 - Of that, the critic pass contributes roughly 1,251 input and 575 output tokens (i.e., ~12-13% of the per-question total)
 
 Across **16 questions**, we spend:
-- **166,960 input tokens**
-- **63,968 output tokens**
-- **Total: ~230,928 tokens**
+- 166,960 input tokens
+- 63,968 output tokens
+- Total: ~230,928 tokens
 
-This is approximately **23%** of a single 1M-token hour and **96× smaller** than the naive 16M-token pass-through (1M tokens × 16 questions).
+This is approximately 23% of a single 1M-token hour and **96× smaller** than a naive pass through the video 16x (1M tokens × 16 questions).
 
-**The amortization effect:** The heavy lifting (captions and embeddings) is reused, so the incremental cost of each new question stays near ~10k input + ~4k output tokens, without exceeding context windows for long videos. We still account for the initial video representation cost.
+**The amortization effect:** The heavy lifting of the models(captions and embeddings) is reused, so the incremental cost of each new question stays near ~10k input + ~4k output tokens, without exceeding context windows for long videos. We still account for the initial video representation cost.
 
 **Critic trade-off:** We add ~12.7% more tokens per question to achieve ~5.98% absolute accuracy gain. If quality matters, run the critic conditionally on confidence for customizable accuracy-cost trade-offs.
+
+In a streaming setting, instead of having to pass the entire video and its past history through a model when new context comes in, we can cache the captions database and add to it as new frames come in, saving token costs.
 
 ## Limitations and Discussion
 
