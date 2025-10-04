@@ -17,11 +17,11 @@ title: "Long-Context Video Understanding"
 
 ---
 
-Imagine a future where AI lives in the physical world—where it sees what we see, learns from nature, and helps solve real-world problems. Humans constantly process visual information over time, recognizing patterns, recalling key moments, and building understanding from hours of experience. **AI should be able to understand long videos the way humans do.**
+Imagine a future where AI lives in the physical world. It sees what we see, learns from natural processes, and helps solve real-world problems. Humans constantly process visual information over time, recognizing patterns, recalling key moments, and building understanding from hours of experience. AI should be able to understand long videos the way humans do.
 
 ## The Challenge
 
-Current AI models have a fixed context length. A single highly compressed long video can hold around **1 million tokens**. Even with fully linearized attention, the visual data we generate daily will exceed what any model can process in a single pass.
+Current AI models have a fixed context length. A single highly compressed long video can hold around **1 million tokens**, making it difficult for AI to reason through long visual contexts. Even with fully linearized attention, the visual data we generate daily will exceed what any model can process in a single pass.
 
 We need a fundamentally different approach to understand and process multi-hour videos.
 
