@@ -113,7 +113,7 @@ If the confidence score is below a threshold **T = 70%**, the critic's reasoning
 
 An example of the entire pipeline can be seen here:
 
-![Full Pipeline](fig2new.pdf)
+![Full Pipeline](fig2new-1.png)
 
 To see the full walkthroughs of questions, please visit our [interactive demo](https://klu921.github.io/agentic_lv_demo/).
 
