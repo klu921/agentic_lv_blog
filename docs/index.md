@@ -58,7 +58,7 @@ Once these captions are parsed, we chunk them and pass through an LLM one more t
 
 Once we have our caption database, we embed it using an open-source token embedder, so we can semantically match captions with queries.
 
-<figure class="diagram" style="max-width: 400; margin: 0 auto;">
+<figure class="diagram" style="max-width: 300; margin: 0 auto;">
   <img
     src="fig1framecap.png"
     alt="Frame and Caption database"
@@ -83,7 +83,7 @@ Next, we construct a multi-turn pathway between a reasoning LLM and a VLM. An LL
 
 The LLM generates a short "search query" from the user query and performs a cosine-similarity algorithm between the search query and the image captions in the database. For example:
 
-<figure class="diagram" style="max-width: 400px; margin: 0 auto;">
+<figure class="diagram" style="max-width: 300px; margin: 0 auto;">
   <img
     src="Question_example.png"
     alt="Question + Caption Example"
@@ -100,7 +100,7 @@ The search algorithm returns the **top k = 40** caption-similarity scores with t
 
 Following the previous example, the LLM may have pinpointed relevant frames from captions regarding when a council appears deep in thought, but needs more detail. It can query a VLM with a question of choice:
 
-<figure class="diagram" style="max-width: 400px; margin: 0 auto;">
+<figure class="diagram" style="max-width: 300px; margin: 0 auto;">
   <img
     src="VLM_query.png"
     alt="VLM Query Example"
@@ -125,7 +125,7 @@ We notice that when the LLM queries the VLM asking for specific visual informati
 
 Similarly, the LLM may make certain assumptions that aren't explicitly seen from the frames. An example following the question we've been exploring:
 
-<figure class="diagram" style="max-width: 400px; margin: 0 auto;">
+<figure class="diagram" style="max-width: 300px; margin: 0 auto;">
   <img
     src="wrong_final_answer.png"
     alt="Incorrect Reasoning Path"
@@ -142,7 +142,7 @@ To remediate, we run a second pass through a critic model, which takes in the or
 
 The critic agent also has access to a critic VLM and analyzes the LLM's reasoning + evidence in relevant frames as a sanity check. An example pass through the critic VLM:
 
-<figure class="diagram" style="max-width: 400px; margin: 0 auto;">
+<figure class="diagram" style="max-width: 300px; margin: 0 auto;">
   <img
     src="critic_response.png"
     alt="Critic Response"
@@ -159,7 +159,7 @@ The critic analyzes the visual data with the accompanying reasoning and determin
 If the confidence score is below a threshold **T = 70%**, the critic's reasoning is passed back to the acting LLM, and the LLM follows its suggestions for re-evaluating, utilizing the same three tools as earlier.
 
 An example of the entire pipeline can be seen here:
-<figure class="diagram" style="max-width: 400px; margin: 0 auto;">
+<figure class="diagram" style="max-width: 300px; margin: 0 auto;">
   <img
     src="fig2new-1.png"
     alt="Full Pipeline"
