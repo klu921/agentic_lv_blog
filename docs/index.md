@@ -17,29 +17,24 @@ title: "Long-Context Video Understanding"
 
 ---
 
-Imagine a future where AI lives in the physical world. It sees what we see, learns from natural processes, and helps solve real-world problems. Humans constantly process visual information over time, recognizing patterns, recalling key moments, and building understanding from hours of experience. AI should be able to understand long videos the way humans do.
+Imagine a future where AI lives in the physical world. It constantly processes visual information and has the exact context necessary to solve problems. Humans constantly process visual information over time, recognizing patterns, recalling key moments, and building understanding from hours of experience. AI should be able to understand long-context visual information the way humans do.
 
 ## The Challenge
 
+To evaluate current AI model's "long context" visual understanding, there are numerous benchmarks which test on hour-long and multi-hour videos. 
 Current AI models have a fixed context length. A single highly compressed 1 hour video holds around **1 million tokens**, making it difficult for AI to reason through long visual contexts. Even with fully linearized attention, the visual data we generate daily will exceed what any model can process in a single pass.
 
 We need a fundamentally different approach to understand and process multi-hour videos.
 
 Solving long-context video understanding requires three key parts:
 
-1. **An efficient offline video representation**
+1. **An efficient offline/streaming video representation**
 2. **Smart retrieval of relevant moments**
 3. **Strong reasoning over visual and temporal information**
 
+Prior work such as Deep Video Discovery has explored agentic systems for long-video evaluation, and we build on these ideas and push them further. While reasoning agents are powerful, they remain prone to alignment errors, lossy image-to-text translation, and hallucinations. During our experiments, we noticed their fragility and unreliability, especially on subjective visual data. To address these issues, we introduce a third-party **critic module** that evaluates agent outputs, identifies discrepancies, and prompts re-evaluation. We propose an **agentic method** for understanding long videos that addresses each of these components using fully open-source models. Our approach utilizes the ReAct framework, which integrates reasoning with tool use. Within this framework, an LLM can both perform step-by-step reasoning and invoke external resources, such as searching through a captions database and communicating with other multimodal LLMs.
+
 ## Our Solution
-
-We propose an **agentic method** for understanding long videos that addresses each of these components using fully open-source models. Our approach utilizes the ReAct framework, which integrates reasoning with tool use. Within this framework, an LLM can both perform step-by-step reasoning and invoke external resources, such as searching through a captions database and communicating with other multimodal LLMs.
-
-Prior work such as Deep Video Discovery has explored agentic systems for long-video evaluation, and we build on these ideas and push them further.
-
-While reasoning agents are powerful, they remain prone to alignment errors, lossy image-to-text translation, and hallucinations. During our experiments, we noticed their fragility and unreliability, especially on subjective visual data. To address these issues, we introduce a third-party **critic module** that evaluates agent outputs, identifies discrepancies, and prompts re-evaluation.
-
-## The Pipeline
 
 ### Step 1: Building an Efficient Offline Video Representation
 
@@ -50,7 +45,7 @@ For each frame, we use an LLM to capture a detailed description and build a capt
 - Actions taking place
 - Location and scene details
 
-Once these captions are parsed, we chunk them and pass through an LLM one more time to generate:
+Most queries are framed around some "signal" (subject, scene, location), and we try to capture any referenced "signal" in our caption representation, drawing inspiration from named entity recognition. Once these captions are parsed, we chunk them and pass through an LLM one more time to generate:
 
 - **Character log**: Physical descriptions of recurring characters and their potential roles in the long videos
 - **Event log**: Different landscapes and settings the video is filmed in
@@ -72,7 +67,7 @@ Once we have our caption database, we embed it using an open-source token embedd
 
 This representation is:
 - **Expandable**: If we have video data streamed in, we can continue adding linearly to our database. The entire video doesn't need to be fed to a model over again to maintain history.
-- **Compact**: Storing captions in addition to the video takes up very little space.
+- **Compact**: Storing captions in addition to the video takes up very little space. For example, a 
 - **Versatile**: It's detailed at different granularities, so the model has relevant information depending on the type of question asked.
 
 ### Step 2: Smart Retrieval of Relevant Moments
