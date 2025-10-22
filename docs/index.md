@@ -91,6 +91,20 @@ The LLM generates a short "search query" from the user query and performs a cosi
 
 The search algorithm returns the **top k = 40** caption-similarity scores with timestamps, and the LLM reads and clusters relevant timestamps.
 
+Here are the top $7$ captions returned. The agent is asked to consider both similarity score and frequency of clustered frames when deciding which frames to attach to the VLM query:
+
+<figure class="diagram" style="max-width: 800px; margin: 0 auto;">
+  <img
+    src="captions_1.png"
+    alt="Top 7 captions"
+    style="width: 100%; height: auto;"
+
+  >
+  <figcaption>
+    <h4>Caption Search Results</h4>
+  </figcaption>
+</figure>
+
 **Action 2: Query the VLM with Chosen Frames**
 
 Following the previous example, the LLM may have pinpointed relevant frames from captions regarding when a council appears deep in thought, but needs more detail. It can query a VLM with a question of choice:
