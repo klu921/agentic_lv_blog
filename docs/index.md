@@ -95,7 +95,7 @@ Here are the top $7$ captions returned. The agent is asked to consider both simi
 
 <figure class="diagram" style="max-width: 800px; margin: 0 auto;">
   <img
-    src="capti ons_1.png"
+    src="captions_1.png"
     alt="Top 7 captions"
     style="width: 100%; height: auto;"
 
