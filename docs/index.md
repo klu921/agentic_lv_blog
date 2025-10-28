@@ -199,7 +199,7 @@ On a random sample of videos from the HourVideo dataset, the pipeline is able to
 
 With an offline representation that can be re-queried, we can save token costs through amortization. We precompute multi-granularity captions once, then retrieve only relevant information and context at query-time.
 
-With the critic enable*, a typical Q&A cycle looks like:
+With the critic enabled, a typical Q&A cycle looks like:
 
 - **Per question**: About 10,435 input tokens and 3,998 output tokens (combined across VLM and LLM), costing roughly **~$0.03** on the most expensive open-source options
 - Of that, the critic pass contributes roughly 1,251 input and 575 output tokens (i.e., ~12-13% of the per-question total)
