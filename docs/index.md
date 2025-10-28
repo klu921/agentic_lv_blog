@@ -236,13 +236,12 @@ Future directions include:
 - **Grounding critic evaluations**: Providing a stronger framework to evaluate the validity of reasoning claims with subjective visual data.
 - **Parallel search**: Parallel search over many different frame-ranges to identify the most relevant scenes for the question
 - Robust captioning for different types of questions
-- 
 
 ## Conclusion
 
 Long-context video understanding is fundamentally a systems integration problem requiring compact multimodal representations, targeted retrieval, and a strong reasoning cycle. The proposed agent combines hierarchical captions, semantic search, VLM-based image understanding, and a critic to improve robustness.
 
-On open-source models, this pipeline yields **state-of-the-art performance on LVBench at 65.19% accuracy**, with an approximately **6% absolute accuracy improvement** at approximately **13% additional tokens** per question using the critic model.
+On open-source models, this pipeline yields **state-of-the-art performance over all open-source models on LVBench at 65.19% accuracy**, with an approximately **6% absolute accuracy improvement** at approximately **13% additional tokens** per question using the critic model.
 
 The future of AI isn't necessarily about bigger context windows. It's also about smarter systems that know what information to search for and how to reason. Just like humans don't remember every second of a movie but can recall key moments when asked, AI should work the same way.
 
