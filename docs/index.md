@@ -190,7 +190,7 @@ Our agentic video pipeline on the open-source models **DeepSeek V3.1** and Meta'
 - **60.19%** accuracy with no critic pass-through
 - **65.18%** accuracy with critic pass-through
 
-On a random video from the HourVideo dataset, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans (to ensure that that the retrieval algorithm finds frames relevant to the question) in the dataset **68.19%** of the time, showing the strength of our representation. Performance also beats prior socratic models, and is almost on par with closed-source models. 
+On a random video from the HourVideo dataset, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans (to ensure that that the retrieval algorithm finds frames relevant to the question) in the dataset **68.19%** of the time, showing the strength of our representation. Performance also beats prior socratic models, and is almost on par with closed-source models running when tested on HourVideo's 50-video Development Set. 
 
 <p align="center">
   <img src="lvbenchresults.png" alt="LVBench Results" width="45%" style="display:inline-block; margin-right:10px;" />
