@@ -21,10 +21,15 @@ Imagine a future where AI lives in the physical world. It constantly processes v
 
 ## The Challenge
 
-To evaluate current AI model's "long context" visual understanding, there are numerous benchmarks which test on hour-long and multi-hour videos. 
+One way to test for "long-context" visual understanding is through hour-long vidoes. There are numerous benchmarks which test AI models on hour-long and multi-hour videos. 
 Current AI models have a fixed context length. A single highly compressed 1 hour video holds around **1 million tokens**, making it difficult for AI to reason through long visual contexts. Even with fully linearized attention, the visual data we generate daily will exceed what any model can process in a single pass.
 
 We need a fundamentally different approach to understand and process multi-hour videos.
+
+Prior work such as Deep Video Discovery has explored agentic systems for long-video evaluation, and we build on these ideas and push them further with a third party **critic module**. While reasoning agents are powerful, they remain prone to alignment errors, lossy image-to-text translation, and hallucinations. During our experiments, we noticed their unreliability, especially on subjective visual data. To address these issues, we introduce a third-party critic-agent that evaluates agent outputs, identifies discrepancies, and prompts re-evaluation. Following Deep Video Discovery, we propose an **agentic method** for understanding long videos that addresses each of these components using fully open-source models. Our approach utilizes the ReAct framework, which integrates reasoning with tool use. Within this framework, an LLM can both perform step-by-step reasoning and invoke external resources, such as searching through a captions database and communicating with other multimodal LLMs.
+
+
+## Our Solution
 
 Solving long-context video understanding requires three key parts:
 
@@ -32,9 +37,6 @@ Solving long-context video understanding requires three key parts:
 2. **Smart retrieval of relevant moments**
 3. **Strong reasoning over visual and temporal information**
 
-Prior work such as Deep Video Discovery has explored agentic systems for long-video evaluation, and we build on these ideas and push them further. While reasoning agents are powerful, they remain prone to alignment errors, lossy image-to-text translation, and hallucinations. During our experiments, we noticed their fragility and unreliability, especially on subjective visual data. To address these issues, we introduce a third-party **critic module** that evaluates agent outputs, identifies discrepancies, and prompts re-evaluation. We propose an **agentic method** for understanding long videos that addresses each of these components using fully open-source models. Our approach utilizes the ReAct framework, which integrates reasoning with tool use. Within this framework, an LLM can both perform step-by-step reasoning and invoke external resources, such as searching through a captions database and communicating with other multimodal LLMs.
-
-## Our Solution
 
 ### Step 1: Building an Efficient Offline Video Representation
 
@@ -67,7 +69,7 @@ Once we have our caption database, we embed it using an open-source token embedd
 
 This representation is:
 - **Expandable**: If we have video data streamed in, we can continue adding linearly to our database. The entire video doesn't need to be fed to a model over again to maintain history.
-- **Compact**: Storing captions in addition to the video takes up very little space. For example, a 
+- **Compact**: Storing captions in addition to the video takes up very little space. For example, an embedded captions file of a long video is 50 MB, while the video itself is 4GB.
 - **Versatile**: It's detailed at different granularities, so the model has relevant information depending on the type of question asked.
 
 ### Step 2: Smart Retrieval of Relevant Moments
@@ -76,7 +78,7 @@ Next, we construct a multi-turn pathway between a reasoning LLM and a VLM. An LL
 
 **Action 1: Semantic Caption Search**
 
-The LLM generates a short "search query" from the user query and performs a cosine-similarity algorithm between the search query and the image captions in the database. For example:
+The LLM generates a short "search query" from the user query and performs a retrieval algorithm between the search query and the image captions in the database. For example:
 
 <figure class="diagram" style="max-width: 600px; margin: 0 auto;">
   <img
@@ -89,7 +91,7 @@ The LLM generates a short "search query" from the user query and performs a cosi
   </figcaption>
 </figure>
 
-The search algorithm returns the **top k = 40** caption-similarity scores with timestamps, and the LLM reads and clusters relevant timestamps.
+Here, our retrieval algorithm performs a cosine-similarity search of embeddings and returns the **top k = 40** caption-similarity scores with timestamps, and the LLM reads and clusters relevant timestamps.
 
 Here are the top $7$ captions returned. The agent is asked to consider both similarity score and frequency of clustered frames when deciding which frames to attach to the VLM query:
 
@@ -120,7 +122,7 @@ Following the previous example, the LLM may have pinpointed relevant frames from
   </figcaption>
 </figure>
 
-The VLM returns a chain of thought with a response to the LLM's prompt. For each VLM call, we also attach the global summary to provide required context.
+The VLM returns a chain of thought with a response to the LLM's prompt. This chain of thought gives the LLM a more complete picture of which components of frames are relevant and allows for further detailed prompting. It also provides a simple summary that the user can follow to understand the components that give rise to the answer. For each VLM call, we also attach the global summary to provide required context.
 
 **Action 3: Decide on a Final Answer**
 
@@ -183,12 +185,16 @@ To see the full walkthroughs of questions, please visit our [interactive demo](h
 
 ## Results
 
-Our agentic video pipeline on the open-source models **DeepSeek V3.1** and Meta's **Llama-4-Maverick VLM** performs **state-of-the-art** on the LVBench dataset:
+Our agentic video pipeline on the open-source models **DeepSeek V3.1** and Meta's **Llama-4-Maverick VLM** performs **state-of-the-art out of all open-source models** on the LVBench dataset:
 
 - **60.19%** accuracy with no critic pass-through
 - **65.18%** accuracy with critic pass-through
 
-On a random sample of videos from the HourVideo dataset, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans in the dataset **68.19%** of the time, showing the strength of our representation.
+On a random video from the HourVideo dataset, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans (to ensure that that the retrieval algorithm finds frames relevant to the question) in the dataset **68.19%** of the time, showing the strength of our representation. Performance also beats prior socratic models, and is almost on par with closed-source models. 
+![LVBench Results](lvbenchresults.png)
+
+![HourVideo Results](hourvideoresults.png)
+
 
 ## Token and Cost Analysis
 
