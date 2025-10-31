@@ -221,7 +221,7 @@ This is approximately 23% of a single 1M-token hour and **96× smaller** than a 
 
 **The amortization effect:** The heavy lifting of the models(captions and embeddings) is reused, so the incremental cost of each new question stays near ~10k input + ~4k output tokens, without exceeding context windows for long videos. We still account for the initial video representation cost.
 
-**Critic trade-off:** We add ~12.7% more tokens per question to achieve ~5.98% absolute accuracy gain. If quality matters, run the critic conditionally on confidence for customizable accuracy-cost trade-offs.
+**Critic trade-off:** We add ~12.7% more tokens per question to achieve ~4.98% absolute accuracy gain. If quality matters, run the critic conditionally on confidence for customizable accuracy-cost trade-offs.
 
 In a streaming setting, instead of having to pass the entire video and its past history through a model when new context comes in, we can cache the captions database and add to it as new frames come in, saving token costs.
 
@@ -249,7 +249,7 @@ Future directions include:
 
 Long-context video understanding is fundamentally a systems integration problem requiring compact multimodal representations, targeted retrieval, and a strong reasoning cycle. The proposed agent combines hierarchical captions, semantic search, VLM-based image understanding, and a critic to improve robustness.
 
-On open-source models, this pipeline yields **state-of-the-art performance over all open-source models on LVBench at 65.19% accuracy**, with an approximately **6% absolute accuracy improvement** at approximately **13% additional tokens** per question using the critic model.
+On open-source models, this pipeline yields **state-of-the-art performance over all open-source models on LVBench at 65.19% accuracy**, with an approximately **5% absolute accuracy improvement** at approximately **13% additional tokens** per question using the critic model.
 
 The future of AI isn't necessarily about bigger context windows. It's also about smarter systems that know what information to search for and how to reason. Just like humans don't remember every second of a movie but can recall key moments when asked, AI should work the same way.
 
