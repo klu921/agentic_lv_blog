@@ -192,7 +192,11 @@ Our agentic video pipeline on the open-source models **DeepSeek V3.1** and Meta'
 
 On a random video from the HourVideo dataset, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans (to ensure that that the retrieval algorithm finds frames relevant to the question) in the dataset **68.19%** of the time, showing the strength of our representation. Performance also beats prior socratic models, and is almost on par with closed-source models running when tested on HourVideo's 50-video Development Set. 
 
+<div markdown="1" style="text-align:center;">
+
 **LV Bench**
+
+<div markdown="1" style="display:inline-block; text-align:left;">
 
 | LV Bench | Overall |
 |---|:---:|
@@ -205,15 +209,27 @@ On a random video from the HourVideo dataset, the pipeline is able to correctly 
 | <span style="color:#1f6feb; font-weight:600;">InternVL2.5-78B</span> | 43.6% |
 | <span style="color:#1f6feb; font-weight:600;">mPLUG-Owl3</span> | 43.5% |
 
+</div>
+
+<small>Blue text is open-source (LV Bench leaderboard).</small>
 
 **Hour Video**
 
-| Hour Video                  | Overall |
-|----------------------------|:-------:|
-| Gemini 1.5 Pro             | 37.3%   |
-| Our Pipeline (Critic Pass) | 31.4%   |
-| LLaVa-34B-DPO (Socratic)   | 22.3%   |
-| GPT-4 (Socratic)           | 25.7%   |
+<div markdown="1" style="display:inline-block; text-align:left;">
+
+| Hour Video | Overall |
+|---|:---:|
+| Gemini 1.5 Pro | 37.3% |
+| Our Pipeline (Critic Pass) | 31.4% |
+| LLaVa-34B-DPO (Socratic) | 22.3% |
+| GPT-4 (Socratic) | 25.7% |
+
+</div>
+
+<small>Evaluation on HourVideo Dev set.</small>
+
+</div>
+
 
 
   
