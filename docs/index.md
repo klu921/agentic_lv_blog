@@ -196,6 +196,7 @@ On a random video from the HourVideo dataset, the pipeline is able to correctly 
   <div markdown="1" style="flex:1; min-width:280px;">
     
 **LV Bench**
+
 | LV Bench | Overall |
 |---|:---:|
 | Deep Video Discovery | 74.2% |
@@ -211,6 +212,7 @@ On a random video from the HourVideo dataset, the pipeline is able to correctly 
 
 
 **Hour Video**
+
 | Hour Video                  | Overall |
 |----------------------------|:-------:|
 | Gemini 1.5 Pro             | 37.3%   |
