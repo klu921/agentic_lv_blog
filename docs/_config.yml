@@ -3,3 +3,4 @@ author: AI Research Team
 description: A novel approach to understanding multi-hour videos using language models and visual reasoning
 markdown: kramdown
 highlighter: rouge
+input: GFM
