@@ -192,6 +192,9 @@ Our agentic video pipeline on the open-source models **DeepSeek V3.1** and Meta'
 
 On a random video from the HourVideo dataset, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans (to ensure that that the retrieval algorithm finds frames relevant to the question) in the dataset **68.19%** of the time, showing the strength of our representation. Performance also beats prior socratic models, and is almost on par with closed-source models running when tested on HourVideo's 50-video Development Set. 
 
+<div markdown="1" style="display:flex; gap:16px; align-items:flex-start;">
+  <div markdown="1" style="flex:1; min-width:280px;">
+    
 **LV Bench**
 | LV Bench | Overall |
 |---|:---:|
@@ -221,6 +224,9 @@ On a random video from the HourVideo dataset, the pipeline is able to correctly 
 |--------------------------------|----------:|-----------:|----------:|-----------:|-----------:|------------:|
 | One Question (With Critic Pass)|      7249 |        812 |      3186 |       1852 |      10435 |        3998 |
 | Critic Pass                    |       751 |        342 |       500 |        233 |       1251 |         575 |
+
+  </div>
+</div>
 
 
 **Context:** A normal hour-long video compresses to about 1,000,000 tokens. If you naively pass the entire video for every question, you spend ~1M input tokens per question, which is expensive and slow, especially in streaming settings.
