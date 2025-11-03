@@ -211,7 +211,7 @@ On a random video from the HourVideo dataset, the pipeline is able to correctly 
 
 </div>
 
-<small>Blue text is open-source (LV Bench leaderboard).</small>
+<small>Blue text is open-source models. Results taken from LV Bench leaderboard.</small>
 
 **Hour Video**
 
