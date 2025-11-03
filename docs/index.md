@@ -226,7 +226,7 @@ On a random video from the HourVideo dataset, the pipeline is able to correctly 
 
 </div>
 
-<small>Evaluation on HourVideo Dev set.</small>
+<small>Evaluation on HourVideo Dev set. Results taken from HourVideo paper.</small>
 
 </div>
 
