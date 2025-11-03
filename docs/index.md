@@ -192,15 +192,35 @@ Our agentic video pipeline on the open-source models **DeepSeek V3.1** and Meta'
 
 On a random video from the HourVideo dataset, the pipeline is able to correctly identify relevant frames as annotated and reviewed by humans (to ensure that that the retrieval algorithm finds frames relevant to the question) in the dataset **68.19%** of the time, showing the strength of our representation. Performance also beats prior socratic models, and is almost on par with closed-source models running when tested on HourVideo's 50-video Development Set. 
 
-<p align="center">
-  <img src="lvbenchresults.png" alt="LVBench Results" width="45%" style="display:inline-block; margin-right:10px;" />
-  <img src="hourvideoresults.png" alt="HourVideo Results" width="45%" style="display:inline-block;" />
-</p>
+**LV Bench**
+| LV Bench | Overall |
+|---|:---:|
+| Deep Video Discovery | 74.2% |
+| <span style="color:#1f6feb; font-weight:600;">Our Pipeline (Critic Pass)</span> | 65.2% |
+| Our Pipeline (No Critic) | 60.2% |
+| Seed 1.5-VL-Thinking | 64.6% |
+| <span style="color:#1f6feb; font-weight:600;">AdaReTaKe</span> | 53.3% |
+| GPT-4o-2024-11-20 | 48.9% |
+| <span style="color:#1f6feb; font-weight:600;">InternVL2.5-78B</span> | 43.6% |
+| <span style="color:#1f6feb; font-weight:600;">mPLUG-Owl3</span> | 43.5% |
 
+<small>Blue text is open-source models (Results taken from LV Bench leaderboard).</small>
+
+
+**Hour Video**
+| Hour Video                  | Overall |
+|----------------------------|:-------:|
+| Gemini 1.5 Pro             | 37.3%   |
+| Our Pipeline (Critic Pass) | 31.4%   |
+| LLaVa-34B-DPO (Socratic)   | 22.3%   |
+| GPT-4 (Socratic)           | 25.7%   |
 
 ## Token and Cost Analysis
 
-![Token Analysis](full_token_preview.png)
+| Num Tokens (AVG)               | VLM Input | VLM Output | LLM Input | LLM Output | Total Input | Total Output |
+|--------------------------------|----------:|-----------:|----------:|-----------:|-----------:|------------:|
+| One Question (With Critic Pass)|      7249 |        812 |      3186 |       1852 |      10435 |        3998 |
+| Critic Pass                    |       751 |        342 |       500 |        233 |       1251 |         575 |
 
 
 **Context:** A normal hour-long video compresses to about 1,000,000 tokens. If you naively pass the entire video for every question, you spend ~1M input tokens per question, which is expensive and slow, especially in streaming settings.
