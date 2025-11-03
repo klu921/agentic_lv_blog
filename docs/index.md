@@ -202,7 +202,7 @@ On a random video from the HourVideo dataset, the pipeline is able to correctly 
 |---|:---:|
 | Deep Video Discovery | 74.2% |
 | <span style="color:#1f6feb; font-weight:600;">Our Pipeline (Critic Pass)</span> | 65.2% |
-| Our Pipeline (No Critic) | 60.2% |
+| <span style="color:#1f6feb; font-weight:600;">Our Pipeline (No Critic) | 60.2% |
 | Seed 1.5-VL-Thinking | 64.6% |
 | <span style="color:#1f6feb; font-weight:600;">AdaReTaKe</span> | 53.3% |
 | GPT-4o-2024-11-20 | 48.9% |
@@ -290,7 +290,7 @@ Future directions include:
 
 Long-context video understanding is fundamentally a systems integration problem requiring compact multimodal representations, targeted retrieval, and a strong reasoning cycle. The proposed agent combines hierarchical captions, semantic search, VLM-based image understanding, and a critic to improve robustness.
 
-On open-source models, this pipeline yields **state-of-the-art performance over all open-source models on LVBench at 65.19% accuracy**, with an approximately **5% absolute accuracy improvement** at approximately **13% additional tokens** per question using the critic model.
+On open-source models, this pipeline yields **state-of-the-art performance over all open-source models on LVBench at 65.19% accuracy**, with an approximately **5% absolute accuracy improvement** at approximately **13% additional tokens** per question (not including re-evaluation) using the critic model.
 
 The future of AI isn't necessarily about bigger context windows. It's also about smarter systems that know what information to search for and how to reason. Just like humans don't remember every second of a movie but can recall key moments when asked, AI should work the same way.
 
